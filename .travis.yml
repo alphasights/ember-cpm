@@ -1,0 +1,51 @@
+---
+language: node_js
+node_js:
+  - "0.12"
+
+sudo: false
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  matrix:
+    - EMBER_TRY_SCENARIO=default
+    - EMBER_TRY_SCENARIO=ember-1.10
+    - EMBER_TRY_SCENARIO=ember-1.11
+    - EMBER_TRY_SCENARIO=ember-1.12
+    - EMBER_TRY_SCENARIO=ember-release
+    - EMBER_TRY_SCENARIO=ember-beta
+    - EMBER_TRY_SCENARIO=ember-canary
+  global:
+    - S3_BUCKET_NAME=ember-cpm-builds
+    - secure: "XzWXDClclsPkxVhHAETuKPHSxocCpWDIpE12IzNcH6aHVHJTAQs7esUf+iA9cADwm7hSVitoG6AdVbz5cILH+ZvZrQBYe9YUnfIE7oMrmtux11YpIkwJUUWn9xAen8Yd4wG83bSJh5wy4ZexuMtvD92zo4BSG+MPDBeA0gvQC8Y="
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: EMBER_TRY_SCENARIO=ember-canary
+
+before_install:
+  - mkdir travis-phantomjs
+  - wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
+  - export PATH=$PWD/travis-phantomjs:$PATH
+  - "npm config set spin false"
+  - "npm install -g npm@^2"
+
+install:
+  - npm install -g bower
+  - npm install
+  - bower install
+
+script:
+  - ember try $EMBER_TRY_SCENARIO test
+
+after_success:
+  - ember build --environment=production
+  - "./bin/s3-publish.js"
+  - "./bin/publish_to_shim_repo"
+
+
