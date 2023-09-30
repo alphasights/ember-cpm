@@ -1,0 +1,23 @@
+{
+  "name": "ember-cpm",
+  "version": "0.9.1",
+  "description": "Computed Propery Macros for Ember.js",
+  "main": [ "index.js" ],
+  "dependencies": {
+    "jquery": "~1.7.0",
+    "handlebars": "1.0.0-rc.4"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jamesarosen/ember-cpm.git"
+  },
+  "keywords": [
+    "ember",
+    "emberjs"
+  ],
+  "author": "James A. Rosen",
+  "license": "APLv2"
+}
